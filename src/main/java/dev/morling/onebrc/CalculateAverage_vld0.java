@@ -31,8 +31,11 @@ public class CalculateAverage_vld0 {
 
         Map<String, Metric> measurements = Files.lines(Path.of(FILE))
                 .map(line -> {
-                    String[] ss = line.split(";");// fastpath if the regex is a one char String
-                    return new Measurement(ss[0], Double.parseDouble(ss[1]));
+                    // String[] ss = line.split(";");// fastpath if the regex is a one char String
+                    // return new Measurement(ss[0], Double.parseDouble(ss[1]));
+                    int index = line.indexOf(';');
+                    return new Measurement(line.substring(0, index),
+                            Double.parseDouble(line.substring(index + 1)));
                 })
                 .parallel()
                 .collect(
