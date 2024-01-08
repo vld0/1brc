@@ -31,11 +31,12 @@ public class CalculateAverage_vld0 {
 
         Map<String, Metric> measurements = Files.lines(Path.of(FILE))
                 .map(line -> {
-                    // String[] ss = line.split(";");// fastpath if the regex is a one char String
+                    // String[] ss = line.split(";");// NOT WORKING fastpath if the regex is a one char String
                     // return new Measurement(ss[0], Double.parseDouble(ss[1]));
-                    int index = line.indexOf(';');
+                    int index = line.indexOf(';', 1);// city has min 1 char
+                    // Station name: non null UTF-8 string of min length 1 character and max length 100 bytes (i.e. this could be 100 one-byte characters, or 50 two-byte characters, etc.)
                     return new Measurement(line.substring(0, index),
-                            Double.parseDouble(line.substring(index + 1)));
+                            parseDouble(line.substring(index + 1)));
                 })
                 .parallel()
                 .collect(
@@ -47,6 +48,50 @@ public class CalculateAverage_vld0 {
 
         System.out.println(measurements);
 
+    }
+
+    /**
+     * non null double between -99.9 (inclusive) and 99.9 (inclusive), always with one fractional digit
+     *
+     * @param s
+     * @return
+     */
+    static double parseDouble(String s) {
+        char[] cs = s.toCharArray();
+        int n = 0;
+        int fractionalDigit = -1;
+        int negative = 1;
+        if (cs[0] == '-') {
+            // negative
+            negative = -1;
+            if (cs[2] == '.') {
+                n = cs[1] - '0';
+                fractionalDigit = cs[3] - '0';
+            }
+            else if (cs[3] == '.') {
+                n = (cs[1] - '0') * 10 + (cs[2] - '0');
+                fractionalDigit = cs[4] - '0';
+            }
+            else {
+                throw new IllegalStateException(s);
+            }
+        }
+        else {
+            // positive
+            if (cs[1] == '.') {// 2.2
+                n = cs[0] - '0';
+                fractionalDigit = cs[2] - '0';
+            }
+            else if (cs[2] == '.') {// 22.2
+                n = (cs[0] - '0') * 10 + (cs[1] - '0');
+                fractionalDigit = cs[3] - '0';
+            }
+            else {
+                throw new IllegalStateException(s);
+            }
+        }
+
+        return negative * (n + (double) fractionalDigit / 10);
     }
 
     record Measurement(String city, Double temperature) {
