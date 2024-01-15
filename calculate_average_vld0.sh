@@ -17,4 +17,4 @@
 
 
 JAVA_OPTS=""
-time /usr/lib/jvm/openjdk-21.0.1/bin/java $JAVA_OPTS --class-path target/average-1.0.0-SNAPSHOT.jar dev.morling.onebrc.CalculateAverage_vld0
+time /usr/lib/jvm/openjdk-21.0.1/bin/java $JAVA_OPTS --class-path target/average-1.0.0-SNAPSHOT.jar vld0.CalculateAverage_vld0

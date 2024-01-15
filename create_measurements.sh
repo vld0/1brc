@@ -16,4 +16,4 @@
 #
 
 
-java --class-path target/average-1.0.0-SNAPSHOT.jar dev.morling.onebrc.CreateMeasurements $1
+/usr/lib/jvm/openjdk-21.0.1/bin/java --class-path target/average-1.0.0-SNAPSHOT.jar dev.morling.onebrc.CreateMeasurements $1
